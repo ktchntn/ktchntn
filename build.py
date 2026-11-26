@@ -8,8 +8,9 @@ import base64, io, random
 from fontTools import subset
 from fontTools.ttLib import TTFont
 
-FONT_DIR = "/home/claude/font/package/files"
-OUT = "/home/claude/readme/assets"
+import os
+FONT_DIR = os.environ.get("FONT_DIR", "/home/claude/font/package/files")
+OUT = os.environ.get("OUT", "/home/claude/readme/assets")
 
 LIME = "#c6ff00"
 WHITE = "#f5f5f5"
@@ -171,7 +172,73 @@ text{{font-family:'JBM',ui-monospace,monospace}}"""
 </svg>"""
 
 
-for fname, fn in [("header.svg", header), ("skillmap.svg", skillmap)]:
+# -------------------------------------------------------------- org card ---
+def orgcard():
+    W, H = 1200, 300
+    prompt = "keegan@keegantech:~$ gh org view raven-workspace"
+    name = "RAVEN WORKSPACE"
+    est = "· est. 2026"
+    line1 = "Recon to report, one workspace."
+    line2 = "No scratch files. No context switching."
+    chips = [("ORG", "@raven-workspace"), ("OWNER", "ktchntn"), ("STATUS", "IN_DEV")]
+    chip_text = "".join(f"[ {k}: {v} ]" for k, v in chips)
+    regular = prompt + est + line1 + line2 + chip_text + " "
+    bold = name
+
+    # dither fades in toward the right edge, like the header
+    def dens(u, v):
+        return max(0.0, (u - 0.15) * 1.05) ** 1.6 * (0.75 + 0.35 * v)
+    dith = dither_path(760, 24, 416, 252, 8, dens, seed=11)
+    lime_bits = dither_path(1000, 24, 176, 252, 8,
+                            lambda u, v: max(0, u - 0.55) ** 2 * 0.9, seed=5)
+
+    css = f"""
+{font_face(400, regular)}
+{font_face(800, bold)}
+text{{font-family:'JBM',ui-monospace,monospace}}
+.cursor{{animation:blink 1.06s steps(1) infinite}}
+@keyframes blink{{50%{{opacity:0}}}}
+.scan{{animation:scan 6s linear infinite}}
+@keyframes scan{{from{{transform:translateY(-40px)}}to{{transform:translateY(340px)}}}}
+@media (prefers-reduced-motion:reduce){{.cursor,.scan{{animation:none}}}}"""
+
+    chip_svg, x = [], 48
+    for k, v in chips:
+        chip_svg.append(f'<tspan fill="{GREY}">[ {k}: </tspan><tspan fill="{LIME}">{v}</tspan><tspan fill="{GREY}"> ]   </tspan>')
+
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" width="{W}" height="{H}" role="img" aria-label="Raven Workspace, an organization owned by Keegan Techentin. Recon to report, one workspace. Status: in development.">
+<style>{css}</style>
+<defs>
+  <linearGradient id="sl" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="{LIME}" stop-opacity="0"/>
+    <stop offset=".5" stop-color="{LIME}" stop-opacity=".07"/>
+    <stop offset="1" stop-color="{LIME}" stop-opacity="0"/>
+  </linearGradient>
+  <clipPath id="frame"><rect x="1" y="1" width="{W-2}" height="{H-2}"/></clipPath>
+</defs>
+<rect width="{W}" height="{H}" fill="{BG}"/>
+<rect x="1" y="1" width="{W-2}" height="{H-2}" fill="none" stroke="{DIM}" stroke-width="2"/>
+{corners(12, 12, W-24, H-24)}
+
+<path d="{dith}" fill="{WHITE}" opacity=".9"/>
+<path d="{lime_bits}" fill="{LIME}"/>
+
+<text x="48" y="70" font-size="18" fill="{GREY}"><tspan fill="{LIME}">keegan@keegantech</tspan>:~$ gh org view raven-workspace</text>
+
+<text x="48" y="146" font-size="56" font-weight="800" fill="{WHITE}" letter-spacing="1">{name}</text>
+<text x="598" y="146" font-size="18" fill="{LIME}">{est}</text>
+
+<text x="48" y="206" font-size="24" fill="{WHITE}">Recon to report, <tspan fill="{LIME}">one workspace.</tspan></text>
+<rect class="cursor" x="520" y="188" width="12" height="22" fill="{LIME}"/>
+<text x="48" y="238" font-size="16" fill="{GREY}">{line2}</text>
+
+<text x="48" y="278" font-size="14" xml:space="preserve">{''.join(chip_svg)}</text>
+
+<g clip-path="url(#frame)"><rect class="scan" x="0" y="0" width="{W}" height="40" fill="url(#sl)"/></g>
+</svg>"""
+
+
+for fname, fn in [("header.svg", header), ("skillmap.svg", skillmap), ("raven-workspace.svg", orgcard)]:
     with open(f"{OUT}/{fname}", "w") as fh:
         fh.write(fn())
     print(fname, len(open(f"{OUT}/{fname}").read()) // 1024, "KB")

@@ -12,7 +12,14 @@ class       DEV // OFFSEC
 cert        PEN-200 · MOD 27/28 · OSCP pending
 pronouns    she/her
 clearance   scoped only
+org         @raven-workspace · owner
 ```
+
+<a href="https://github.com/raven-workspace/raven">
+  <img src="./assets/raven-workspace.svg" alt="RAVEN WORKSPACE · est. 2026 — Recon to report, one workspace. No scratch files. No context switching. Org: @raven-workspace. Owner: ktchntn. Status: in development." width="100%">
+</a>
+
+[`> cd raven-workspace/raven`](https://github.com/raven-workspace/raven) · [`> view_dossier`](https://keegantech.dev/ops/raven)
 
 <img src="./assets/skillmap.svg" alt="Skill map: Build 19, Shared 3, Break 70 of 92 nodes." width="100%">
 
@@ -20,7 +27,7 @@ clearance   scoped only
 
 | op | stack | status | |
 |---|---|---|---|
-| **RAVEN** | Tauri · Rust · React | `IN_DEV` | [`> view_dossier`](https://keegantech.dev/ops/raven) |
+| **RAVEN_WORKSPACE** | Tauri · Rust · React | `IN_DEV` | [`> view_dossier`](https://keegantech.dev/ops/raven) · [`> repo`](https://github.com/raven-workspace/raven) |
 | **KEEGANTECH.DEV** | Astro · Cloudflare Workers | `V2_BUILD` | [`> view_dossier`](https://keegantech.dev/ops/keegantech-dev) |
 | **RAVEN_DESKTOP** | Kali Linux | `RELEASED` | [`> view_dossier`](https://keegantech.dev/ops/raven-desktop) |
 | **[REDACTED]** | 9 years of NDA enterprise web | `CLASSIFIED` | |
